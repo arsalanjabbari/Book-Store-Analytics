@@ -8,7 +8,7 @@ headers = {'User-Agent':
            "Accept-Language":
                "en-US,en;q=0.5",
            'encoding': 'utf-8'}
-site = 'https://www.iranketab.ir'
+website = 'https://www.iranketab.ir'
 book_links = []
 i = 1
 while True:
@@ -20,9 +20,9 @@ while True:
             break
         else:
             for j in links:
-                book_links.append(site + j.find(class_='product-item-link').get('href'))
+                book_links.append(website + j.find(class_='product-item-link').get('href'))
         print(i, end=' ')
         i += 1
     except:
         time.sleep(20)
-pd.DataFrame(book_links).to_csv('links of all books.csv')
+pd.DataFrame(book_links).to_csv('books_links.csv')

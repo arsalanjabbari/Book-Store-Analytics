@@ -5,30 +5,6 @@ import asyncio
 import aiohttp
 import nest_asyncio
 
-headers = {'User-Agent':
-               'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_5) AppleWebKit/537.36 (KHTML, like Gecko) '
-               'Chrome/50.0.2661.102 Safari/537.36',
-           "Accept-Language":
-               "en-US,en;q=0.5",
-           'encoding': 'utf-8'}
-site = 'https://www.iranketab.ir'
-df = pd.read_csv('link_of_all_books.csv')
-links = df['0'].values
-site = 'https://www.iranketab.ir'
-
-dictt = {'f_title': [], 'e_title': [], 'price_broken': [],
-         'price_special': [], 'discount': [], 'data_rating': [],
-         'publishers': [], 'author': [], 'book_id': [], 'shbook': [],
-         'ghat': [], 'npages': [], 'translator': [], 'jyear': [], 'myear': [],
-         'description': [], 'typej': [], 'sprint': [], 'product_features': [], 'product_tags': [], 'persian_bar': [],
-         'lbook': []}
-profiles_all = {'book_id': [], 'name': [], 'role': []}
-profiles_link = {'book_id': [], 'name': [], 'link': [], 'role': []}
-publishers_all = {'book_id': [], 'name': []}
-publishers_link = {'book_id': [], 'name': [], 'link': []}
-tags = {'book_id': [], 'name': []}
-
-
 async def get_books(soup):
     bs = soup.find_all(class_='product-container well clearfix')[0].find_all(class_='col-md-9 col-sm-9')
     try:
@@ -44,7 +20,6 @@ async def get_books(soup):
     except:
         pb = ''
     try:
-
         description = (soup.find_all(class_='product-description')[0].text.strip())
     except:
         description = ''
@@ -68,13 +43,12 @@ async def get_books(soup):
                 tags['book_id'].append(book_id)
         except:
             tag = []
-        if book_id not in dictt['book_id']:
-            shbook = None
-            ghat = None
+        if book_id not in book_details['book_id']:
+            shabak = None
+            ghaat = None
             npages = None
-            p = None
-            jyear = None
-            myear = None
+            pyear = None
+            gyear = None
             typej = None
             sprint = None
             lbook = None
@@ -83,42 +57,42 @@ async def get_books(soup):
                 if 'کد کتاب' in product_table[n].text:
                     book_id = int(product_table[n].text.split(':')[1].strip())
                 if 'شابک' in product_table[n].text:
-                    shbook = (product_table[n].text.split(':')[1].strip())
+                    shabak = (product_table[n].text.split(':')[1].strip())
                 if 'قطع' in product_table[n].text:
-                    ghat = (product_table[n].text.split(':')[1].strip())
+                    ghaat = (product_table[n].text.split(':')[1].strip())
                 if 'صفحه' in product_table[n].text:
                     npages = (product_table[n].text.split(':')[1].strip())
                 if 'مترجم' in product_table[n].text:
                     try:
                         for p in product_table[n].find_all(class_='prodoct-attribute-item'):
                             trl.append(p.text.strip())
-                            profiles_all['book_id'].append(book_id)
-                            profiles_all['name'].append(p.text.strip())
-                            profiles_all['role'].append('translator')
+                            profiles['book_id'].append(book_id)
+                            profiles['name'].append(p.text.strip())
+                            profiles['role'].append('translator')
                     except:
                         print('no')
                     try:
                         for p in product_table[n].find_all('a'):
-                            profiles_link['book_id'].append(book_id)
-                            profiles_link['name'].append(p.text.strip())
-                            profiles_link['link'].append(site + p.get('href'))
-                            profiles_link['role'].append('translator')
+                            profiles_links['book_id'].append(book_id)
+                            profiles_links['name'].append(p.text.strip())
+                            profiles_links['link'].append(website + p.get('href'))
+                            profiles_links['role'].append('translator')
                     except:
                         print('no')
                 if 'سال انتشار شمسی' in product_table[n].text:
-                    jyear = (product_table[n].text.split(':')[1].strip())
+                    pyear = (product_table[n].text.split(':')[1].strip())
                 if 'سال انتشار میلادی' in product_table[n].text:
-                    myear = (product_table[n].text.split(':')[1].strip())
+                    gyear = (product_table[n].text.split(':')[1].strip())
                 if 'نوع جلد' in product_table[n].text:
                     typej = (product_table[n].text.split(':')[1].strip())
                 if 'سری چاپ' in product_table[n].text:
                     sprint = (product_table[n].text.split(':')[1].strip())
                 if 'زبان کتاب' in product_table[n].text:
                     lbook = (product_table[n].text.split(':')[1].strip()).split('و')
-            dictt['product_features'].append(features)
-            dictt['product_tags'].append(tag)
-            dictt['persian_bar'].append(pb)
-            dictt['description'].append(description)
+            book_details['product_features'].append(features)
+            book_details['product_tags'].append(tag)
+            book_details['persian_bar'].append(pb)
+            book_details['description'].append(description)
             pub = []
             aut = []
             for person in (i.find_all(class_='col-xs-12 prodoct-attribute-items')):
@@ -126,85 +100,84 @@ async def get_books(soup):
                     try:
                         for p in person.find_all('a'):
                             aut.append(p.text.strip())
-                            profiles_all['book_id'].append(book_id)
-                            profiles_all['name'].append(p.text.strip())
-                            profiles_all['role'].append('author')
-                            profiles_link['book_id'].append(book_id)
-                            profiles_link['name'].append(p.text.strip())
-                            profiles_link['link'].append(site + p.get('href'))
-                            profiles_link['role'].append('author')
+                            profiles['book_id'].append(book_id)
+                            profiles['name'].append(p.text.strip())
+                            profiles['role'].append('author')
+                            profiles_links['book_id'].append(book_id)
+                            profiles_links['name'].append(p.text.strip())
+                            profiles_links['link'].append(website + p.get('href'))
+                            profiles_links['role'].append('author')
                     except:
                         print('o')
                 if 'انتشارات' in person.text:
                     try:
                         for p in person.find_all('a'):
                             pub.append(p.text.strip())
-                            publishers_all['book_id'].append(book_id)
-                            publishers_all['name'].append(p.text.strip())
-                            publishers_link['book_id'].append(book_id)
-                            publishers_link['name'].append(p.text.strip())
-                            publishers_link['link'].append(site + p.get('href'))
+                            publishers['book_id'].append(book_id)
+                            publishers['name'].append(p.text.strip())
+                            publishers_links['book_id'].append(book_id)
+                            publishers_links['name'].append(p.text.strip())
+                            publishers_links['link'].append(website + p.get('href'))
                     except:
-                        None
+                        pass
             try:
-                dictt['f_title'].append(i.find(class_='product-name').text.strip().replace('\n', ''))
+                book_details['f_title'].append(i.find(class_='product-name').text.strip().replace('\n', ''))
             except:
-                dictt['f_title'].append(None)
+                book_details['f_title'].append(None)
             try:
-                dictt['e_title'].append(i.find(class_='product-name-englishname ltr').text.strip().replace('\n', ''))
+                book_details['e_title'].append(
+                    i.find(class_='product-name-englishname ltr').text.strip().replace('\n', ''))
             except:
-                dictt['e_title'].append(None)
+                book_details['e_title'].append(None)
             try:
-                dictt['price_broken'].append(
+                book_details['price_broken'].append(
                     int(i.find(class_='price price-broken').text.strip().replace('\n', '').replace(',', '')))
             except:
                 try:
-                    dictt['price_broken'].append(
+                    book_details['price_broken'].append(
                         int(i.find(class_='price').text.strip().replace('\n', '').replace(',', '')))
                 except:
-                    dictt['price_broken'].append(None)
+                    book_details['price_broken'].append(None)
             try:
-                dictt['price_special'].append(
+                book_details['price_special'].append(
                     int(i.find(class_='price price-special').text.strip().replace('\n', '').replace(',', '')))
             except:
                 try:
-                    dictt['price_special'].append(
+                    book_details['price_special'].append(
                         int(i.find(class_='price').text.strip().replace('\n', '').replace(',', '')))
                 except:
-                    dictt['price_special'].append(None)
+                    book_details['price_special'].append(None)
             try:
-                dictt['discount'].append(int(i.find(
+                book_details['discount'].append(int(i.find(
                     style='float: left;font-size: 12px;line-height: 1.375;background-color: #fb3449;color: #fff;padding: 5px 30px 3px;-webkit-border-radius: 0 16px 16px 16px;border-radius: 0 16px 16px 16px;').text.split(
                     '%')[0].strip()))
             except:
-                dictt['discount'].append(None)
+                book_details['discount'].append(None)
             try:
-                dictt['data_rating'].append(float(i.find(class_='my-rating').get('data-rating')))
+                book_details['data_rating'].append(float(i.find(class_='my-rating').get('data-rating')))
             except:
-                dictt['data_rating'].append(None)
+                book_details['data_rating'].append(None)
             try:
-                dictt['publishers'].append((pub))
+                book_details['publishers'].append((pub))
             except:
-                dictt['publishers'].append(None)
+                book_details['publishers'].append(None)
             try:
-                dictt['author'].append((aut))
+                book_details['author'].append((aut))
             except:
-                dictt['author'].append(None)
-            dictt['sprint'].append(sprint)
-            dictt['book_id'].append(book_id)
-            dictt['shbook'].append(shbook)
-            dictt['ghat'].append(ghat)
-            dictt['npages'].append(npages)
-            dictt['translator'].append((trl))
-            dictt['jyear'].append(jyear)
-            dictt['myear'].append(myear)
-            dictt['typej'].append(typej)
-            dictt['lbook'].append(lbook)
-    return (dictt, profiles_all, profiles_link, publishers_all, publishers_link, tags)
-
+                book_details['author'].append(None)
+            book_details['sprint'].append(sprint)
+            book_details['book_id'].append(book_id)
+            book_details['shabak'].append(shabak)
+            book_details['ghaat'].append(ghaat)
+            book_details['npages'].append(npages)
+            book_details['translator'].append((trl))
+            book_details['pyear'].append(pyear)
+            book_details['gyear'].append(gyear)
+            book_details['typej'].append(typej)
+            book_details['lbook'].append(lbook)
+    return (book_details, profiles, profiles_links, publishers, publishers_links, tags)
 
 semaphore = asyncio.Semaphore(10)
-
 
 async def fetch(session, url):
     try:
@@ -218,9 +191,7 @@ async def fetch(session, url):
     except Exception as e:
         print(f"Unexpected error while fetching {url}: {e}")
 
-
 count = []
-
 
 async def scrape_book(url):
     async with aiohttp.ClientSession() as session:
@@ -239,8 +210,32 @@ async def scrape_book(url):
             print(f"Error while scraping {url}: {e}")
             return 0
 
+headers = {'User-Agent':
+               'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_5) AppleWebKit/537.36 (KHTML, like Gecko) '
+               'Chrome/50.0.2661.102 Safari/537.36',
+           "Accept-Language":
+               "en-US,en;q=0.5",
+           'encoding': 'utf-8'}
+website = 'https://www.iranketab.ir'
+books_links_df = pd.read_csv('/Users/arsalanjabbari/Desktop/BOOTCAMP/Book-Store-Analytics/Data/books_links.csv')
+links = books_links_df['0'].values
+
+book_details = {'f_title': [], 'e_title': [], 'price_broken': [],
+                'price_special': [], 'discount': [], 'data_rating': [],
+                'publishers': [], 'author': [], 'book_id': [], 'shabak': [],
+                'ghaat': [], 'npages': [], 'translator': [], 'pyear': [], 'gyear': [],
+                'description': [], 'typej': [], 'sprint': [], 'product_features': [], 'product_tags': [],
+                'persian_bar': [],
+                'lbook': []}
+
+profiles = {'book_id': [], 'name': [], 'role': []}
+profiles_links = {'book_id': [], 'name': [], 'link': [], 'role': []}
+publishers = {'book_id': [], 'name': []}
+publishers_links = {'book_id': [], 'name': [], 'link': []}
+tags = {'book_id': [], 'name': []}
 
 urls = links
+
 nest_asyncio.apply()
 asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
 loop = asyncio.get_event_loop()
@@ -249,10 +244,10 @@ for j in range(0, len(urls), batch_size):
     batch = urls[j:j + batch_size]
     results = loop.run_until_complete(asyncio.gather(*(scrape_book(url) for url in batch)))
     time.sleep(5)
-i = 'all'
-pd.DataFrame(dictt).to_csv(f'books {i}.csv')
-pd.DataFrame(profiles_all).to_csv(f'all_persons {i}.csv')
-pd.DataFrame(profiles_link).to_csv(f'all_persons_links {i}.csv')
-pd.DataFrame(publishers_all).to_csv(f'all_publishers {i}.csv')
-pd.DataFrame(publishers_link).to_csv(f'all_publishers_links {i}.csv')
-pd.DataFrame(tags).to_csv(f'tags {i}.csv')
+
+pd.DataFrame(book_details).to_csv(f'books.csv')
+pd.DataFrame(profiles).to_csv(f'profiles.csv')
+pd.DataFrame(profiles_links).to_csv(f'profiles_links.csv')
+pd.DataFrame(publishers).to_csv(f'publishers.csv')
+pd.DataFrame(publishers_links).to_csv(f'publishers_links.csv')
+pd.DataFrame(tags).to_csv(f'tags.csv')

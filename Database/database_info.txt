@@ -1,0 +1,4 @@
+your database hostname
+your database username
+your database password
+your schema name

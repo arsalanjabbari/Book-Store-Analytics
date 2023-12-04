@@ -1,4 +1,4 @@
-from sqlalchemy import MetaData, create_engine, ForeignKey
+from sqlalchemy import MetaData, create_engine, ForeignKey, text
 from sqlalchemy import Column, Integer, String, Float, Text, DateTime, Boolean
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
@@ -19,7 +19,7 @@ engine = create_engine(f'mysql+pymysql://{USERNAME}:{PASSWORD}@{SERVER}:3306/', 
 conn = engine.connect()
 database_name = 'IranKetab_scraper'
 create_database_query = f"CREATE DATABASE IF NOT EXISTS {database_name}"
-conn.execute(create_database_query)
+conn.execute(text(create_database_query))
 
 # %%
 engine = create_engine(f'mysql+pymysql://{USERNAME}:{PASSWORD}@{SERVER}:3306/IranKetab_scraper', echo=True)

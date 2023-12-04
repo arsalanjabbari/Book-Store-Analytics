@@ -1,4 +1,4 @@
-root
+localhost
 root
 Shir%40zshiraz2002
 Book-Store-DB

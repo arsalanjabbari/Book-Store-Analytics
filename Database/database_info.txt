@@ -1,4 +1,4 @@
-your database hostname
-your database username
-your database password
-your schema name
+root
+root
+Shir%40zshiraz2002
+Book-Store-DB

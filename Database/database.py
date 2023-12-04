@@ -3,25 +3,25 @@ from sqlalchemy import Column, Integer, String, Float, Text, DateTime, Boolean
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 
-with open('database_info.txt') as p:
+with open('/Users/arsalanjabbari/Desktop/BOOTCAMP/Book-Store-Analytics/Database/database_info.txt') as p:
     lines = (p.readlines())
     host = lines[0].strip()
     user = lines[1].strip()
     password = lines[2].strip()
     database = lines[3].strip()
     p.close()
-
+# %%
 meta = MetaData()
 USERNAME = user
 PASSWORD = password
 SERVER = host
 engine = create_engine(f'mysql+pymysql://{USERNAME}:{PASSWORD}@{SERVER}:3306/', echo=True)
 conn = engine.connect()
-database_name = 'Book-Store-DB'
+database_name = 'IranKetab_scraper'
 create_database_query = f"CREATE DATABASE IF NOT EXISTS {database_name}"
 conn.execute(create_database_query)
 
-
+# %%
 engine = create_engine(f'mysql+pymysql://{USERNAME}:{PASSWORD}@{SERVER}:3306/IranKetab_scraper', echo=True)
 conn = engine.connect()
 

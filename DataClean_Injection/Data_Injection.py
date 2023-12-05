@@ -5,23 +5,15 @@ from sqlalchemy.ext.declarative import declarative_base
 import pandas as pd
 from tabulate import tabulate
 
-
-with open('/Users/arsalanjabbari/Desktop/BOOTCAMP/Book-Store-Analytics/Database/database_info.txt') as p:
-    lines = (p.readlines())
-    host = lines[0].strip()
-    user = lines[1].strip()
-    password = lines[2].strip()
-    database = lines[3].strip()
-    p.close()
 #%%
 # Initialize SQLAlchemy Metadata object
 meta = MetaData()
 # Define database connection details
-USERNAME = user
-PASSWORD = password
-SERVER = host
+USERNAME = 'root'
+PASSWORD = '1393ram1393#$'
+SERVER = 'localhost'
 # Create a SQLAlchemy engine for connecting to the MySQL database
-engine = create_engine(f'mysql+pymysql://{USERNAME}:{PASSWORD}@{SERVER}:3306/IranKetab_scraper', echo=True)
+engine = create_engine(f'mysql+pymysql://{USERNAME}:{PASSWORD}@{SERVER}:3306/IranKetab_scraper1', echo=True)
 conn = engine.connect()
 
 #%%
@@ -48,7 +40,7 @@ print(table)
 #%%
 # Create a session to insert data into the tables
 Session = sessionmaker(bind=engine)
-session1 = Session()
+session = Session()
 
 # Insert data from the DataFrame into the 'book' table
 df[['id', 'ISBN', 'persian_title', 'english_title', 'rate', 'price', 'net_price', 'discount_percent', 'current_price',
